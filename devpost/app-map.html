@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plain Rules Reader: App Map</title>
+<style>
+  body { background: #0d1117; color: #e6edf3; font-family: Georgia, serif;
+         line-height: 1.55; margin: 0; padding: 2rem 1.25rem 3rem; }
+  main { max-width: 46rem; margin: 0 auto; }
+  h1 { font-size: 1.7rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.2rem; margin-top: 2rem; color: #79c0ff; }
+  code { font-family: "DejaVu Sans Mono", monospace; font-size: 0.92em;
+         background: #161b22; padding: 0.1em 0.35em; border-radius: 4px; }
+  pre { background: #161b22; padding: 0.9rem 1rem; border-radius: 6px;
+        overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  .diagram { background: #161b22; border-radius: 6px; padding: 1rem; }
+  details { border: 1px solid #30363d; border-radius: 6px;
+            padding: 0.6rem 1rem; margin: 0.6rem 0; }
+  summary { cursor: pointer; font-weight: bold; }
+  .stop { color: #3fb950; font-weight: bold; }
+</style>
+</head>
+<body>
+<main>
+<h1>Plain Rules Reader: App Map</h1>
+<p>A take-home guide to what was built, where each part lives, and one
+practice worth reusing. Snapshot of the code at commit
+<code>f0cad43</code>; the map can drift as the code changes.</p>
+
+<h2>What it is, in plain language</h2>
+<p>One small Python program, <code>rules_reader.py</code>. You hand it a
+competition or program rules page: a web address, a saved file, or pasted
+text. It washes a web page down to its readable words, runs four finders
+over the text (description, deadline, cost, eligibility), and prints four
+labeled answers in short plain sentences. A finder that comes back empty
+becomes an honest line: I could not find it in this page. Nothing is
+stored, and there is no AI model and no key: the reading is careful
+pattern matching, standard library only.</p>
+
+<h2>One action, end to end</h2>
+<div class="diagram">
+<svg viewBox="0 0 720 120" width="100%" role="img"
+     aria-label="Diagram: a rules page goes into the reader, the four finders read it, and four plain answers come out.">
+  <rect x="5" y="30" width="200" height="60" rx="6" fill="#0d1117" stroke="#79c0ff"></rect>
+  <text x="105" y="55" fill="#e6edf3" text-anchor="middle" font-size="13">You give it a page</text>
+  <text x="105" y="75" fill="#8b949e" text-anchor="middle" font-size="12">address, file, or pasted text</text>
+  <line x1="205" y1="60" x2="255" y2="60" stroke="#3fb950" stroke-width="2"></line>
+  <rect x="260" y="30" width="200" height="60" rx="6" fill="#0d1117" stroke="#79c0ff"></rect>
+  <text x="360" y="55" fill="#e6edf3" text-anchor="middle" font-size="13">Four finders read it</text>
+  <text x="360" y="75" fill="#8b949e" text-anchor="middle" font-size="12">in rules_reader.py</text>
+  <line x1="460" y1="60" x2="510" y2="60" stroke="#3fb950" stroke-width="2"></line>
+  <rect x="515" y="30" width="200" height="60" rx="6" fill="#0d1117" stroke="#79c0ff"></rect>
+  <text x="615" y="55" fill="#e6edf3" text-anchor="middle" font-size="13">Four plain answers</text>
+  <text x="615" y="75" fill="#8b949e" text-anchor="middle" font-size="12">or an honest not-found line</text>
+</svg>
+<p>The same path in words: input arrives at <code>read_source</code>, page
+markup is cleaned by <code>html_to_text</code>, the four finders search
+the text, and <code>plain_answers</code> lays out the result.</p>
+</div>
+
+<h2>The route: follow the fee answer</h2>
+<p>This is a reference route for reading the code later. The walkthrough
+with Shannon is scheduled for her October 26 presentation.</p>
+<details>
+<summary><span class="stop">Stop 1:</span> where a page comes in</summary>
+<p><code>rules_reader.py</code>, functions <code>read_source</code> and
+<code>fetch_url</code>. A web address is fetched here; a file is read
+here; pasted text enters through <code>main</code>. Every failure leaves
+through one plain error line, never a crash.</p>
+</details>
+<details>
+<summary><span class="stop">Stop 2:</span> the finder that caught the fee</summary>
+<p><code>rules_reader.py</code>, function <code>find_cost</code>, with
+<code>FEE_PATTERNS</code> and <code>FREE_SIGNALS</code> just above it. It
+decides free or fee sentence by sentence: an amount only counts as a fee
+when the word fee lives in the same sentence. That is why the FC2 page's
+$15,000 prize is not reported as the cost, and its $25 submission fee
+is.</p>
+</details>
+<details>
+<summary><span class="stop">Stop 3:</span> where the four lines are laid out</summary>
+<p><code>rules_reader.py</code>, function <code>plain_answers</code>,
+with <code>LABELS</code> and <code>NOT_FOUND</code> above it. Fixed label
+order, dates written out in full, the page's own words quoted as
+evidence, and an empty finder becomes the not-found line.</p>
+</details>
+<p>The proof for stop 2 lives in <code>tests/test_rules_reader.py</code>,
+check <code>Fc2PrizesTest.test_cost_is_the_fee</code>, run against the
+real saved FC2 page in <code>tests/fixtures/</code>.</p>
+
+<h2>To change this, start here</h2>
+<ul>
+<li>The words of the answers: <code>LABELS</code> and <code>NOT_FOUND</code> in <code>rules_reader.py</code>.</li>
+<li>What counts as free or as a fee: <code>FREE_SIGNALS</code> and <code>FEE_PATTERNS</code> in <code>rules_reader.py</code>.</li>
+<li>Which date shapes are recognized: <code>DATE_RE</code> and <code>plain_date</code> in <code>rules_reader.py</code>.</li>
+<li>What counts as eligibility wording: <code>ELIGIBILITY_STRONG</code> and <code>ELIGIBILITY_WORDS</code> in <code>rules_reader.py</code>.</li>
+</ul>
+
+<h2>A practice to reuse</h2>
+<p>Write the check before you trust the answer. The product requirements
+(<code>prd.md</code>, Features and Behavior) said that on a page charging
+a fee, the cost line must name that fee. The automated check built on
+that sentence, run against the real FC2 page, caught the first version of
+the tool answering with the $15,000 prize instead of the $25 fee. The
+finder was rebuilt, and the same check now passes. A written, checkable
+criterion, tested against a real page, caught a wrong answer that looked
+right. That works on any project, with any agent.</p>
+
+<h2>Run it again</h2>
+<pre><code>python3 rules_reader.py tests/fixtures/basics-rules.html
+python3 rules_reader.py https://learn-ai-basics.devpost.com/rules
+cat tests/fixtures/fc2-prizes.txt | python3 rules_reader.py
+python3 -m unittest discover -s tests</code></pre>
+</main>
+</body>
+</html>
