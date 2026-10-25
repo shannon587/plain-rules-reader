@@ -1,0 +1,10 @@
+SMOKE TEST 1: saved copy of the Build With AI: Basics rules page
+Command: python3 rules_reader.py tests/fixtures/basics-rules.html
+Run: October 25, 2026, local machine
+
+Here is what I found in the file basics-rules.html, in plain words.
+
+What it is: Build With AI: Basics: Learn AI best practices by creating a solid proof-of-concept for your dream project.
+Deadline: The deadline is October 26, 2026, at 5:00 PM EDT. The page says: "Deadline: Oct 26, 2026 @ 5:00pm EDT"
+Cost: It is free to enter. The page says: "NO PURCHASE OR PAYMENT NECESSARY TO ENTER OR WIN."
+Who can enter: The Hackathon IS open to: Individuals who are at least the age of majority where they reside as of the time of entry (“Eligible Individuals”); Teams of Eligible Individuals (“Teams”); and Organizations (including corporations, not-for-profit corporations and other nonprofit organizations, limited. The Hackathon IS NOT open to: Individuals who are residents of, or Organizations domiciled in, a country, state, province or territory where the laws of the United States or local law prohibits participating or receiving a prize in the Hackathon (including, but not limited to, Brazil, Quebec.

@@ -1,0 +1,10 @@
+SMOKE TEST 3: the FC2 prizes page text, a page that charges a fee
+Command: python3 rules_reader.py tests/fixtures/fc2-prizes.txt
+Run: October 25, 2026, local machine
+
+Here is what I found in the file fc2-prizes.txt, in plain words.
+
+What it is: Prizes. The FC2 Catherine Doctorow Innovative Fiction Prize is open to writers of, from, or in the United States writing in English with at least three books published.
+Deadline: The deadline is November 1, 2026. The page says: "They will close 1 November 2026."
+Cost: It costs money to enter. The fee listed is $25. The page says: "Include a $25 submission fee."
+Who can enter: The FC2 Catherine Doctorow Innovative Fiction Prize is open to writers of, from, or in the United States writing in English with at least three books published. Translations and previously published or self-published works are not eligible, although shorter works that have previously appeared in magazines or anthologies may be included in collections, provided that the collection as a whole is unpublished.
